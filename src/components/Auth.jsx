@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(() => {
+    const saved = localStorage.getItem('authPreference');
+    return saved ? JSON.parse(saved) : true;
+  });
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     name: '',
@@ -12,6 +15,10 @@ export default function Auth() {
     password: '',
     confirmPassword: ''
   });
+
+  useEffect(() => {
+    localStorage.setItem('authPreference', JSON.stringify(isLogin));
+  }, [isLogin]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
