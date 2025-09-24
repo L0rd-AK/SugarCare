@@ -34,86 +34,103 @@ export default function Dashboard() {
     }
   };
 
+  const navigationItems = [
+    { id: 'input', label: 'New Reading', icon: '📝' },
+    { id: 'graph', label: 'History', icon: '📊' },
+    { id: 'chat', label: 'AI Chat', icon: '🤖' },
+    { id: 'club', label: 'Community', icon: '👥' },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-white shadow-md">
-        <nav className="container mx-auto px-4 py-3">
+    <div className="min-h-screen gradient-secondary">
+      {/* Modern Header */}
+      <header className="glass border-b border-white/20 sticky top-0 z-50">
+        <nav className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-8">
-              <h1 className="text-2xl font-bold text-blue-600">DIU SugarCare</h1>
-              <div className="hidden md:flex space-x-4">
-                <button 
-                  onClick={() => setView('input')}
-                  className={`px-3 py-2 rounded-md ${view === 'input' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-100'}`}
-                >
-                  New Reading
-                </button>
-                <button 
-                  onClick={() => setView('graph')}
-                  className={`px-3 py-2 rounded-md ${view === 'graph' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-100'}`}
-                >
-                  History
-                </button>
-                <button 
-                  onClick={() => setView('chat')}
-                  className={`px-3 py-2 rounded-md ${view === 'chat' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-100'}`}
-                >
-                  AI Chat
-                </button>
-                <button 
-                  onClick={() => setView('club')}
-                  className={`px-3 py-2 rounded-md ${view === 'club' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-100'}`}
-                >
-                  Club
-                </button>
+              {/* Logo */}
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center shadow-medium">
+                  <span className="text-xl">🩺</span>
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-secondary-900">SugarCare</h1>
+                  <p className="text-xs text-secondary-500">Smart Health Management</p>
+                </div>
+              </div>
+              
+              {/* Desktop Navigation */}
+              <div className="hidden md:flex space-x-2">
+                {navigationItems.map((item) => (
+                  <button 
+                    key={item.id}
+                    onClick={() => setView(item.id)}
+                    className={`nav-item flex items-center space-x-2 ${view === item.id ? 'active' : ''}`}
+                  >
+                    <span>{item.icon}</span>
+                    <span>{item.label}</span>
+                  </button>
+                ))}
               </div>
             </div>
-            <button 
-              onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-            >
-              Logout
-            </button>
+            
+            {/* User Actions */}
+            <div className="flex items-center space-x-3">
+              <div className="hidden sm:block text-right">
+                <p className="text-sm font-medium text-secondary-900">
+                  {auth.currentUser?.email?.split('@')[0]}
+                </p>
+                <p className="text-xs text-secondary-500">
+                  {sugarHistory.length} readings tracked
+                </p>
+              </div>
+              <button 
+                onClick={handleLogout}
+                className="btn-secondary"
+              >
+                Sign Out
+              </button>
+            </div>
           </div>
         </nav>
       </header>
 
-      <main className="container mx-auto p-4">
-        <div className="md:hidden flex space-x-2 mb-4">
-          <button 
-            onClick={() => setView('input')}
-            className="flex-1 px-3 py-2 bg-blue-500 text-white rounded"
-          >
-            New
-          </button>
-          <button 
-            onClick={() => setView('graph')}
-            className="flex-1 px-3 py-2 bg-blue-500 text-white rounded"
-          >
-            History
-          </button>
-          <button 
-            onClick={() => setView('chat')}
-            className="flex-1 px-3 py-2 bg-blue-500 text-white rounded"
-          >
-            Chat
-          </button>
-          <button 
-            onClick={() => setView('club')}
-            className="flex-1 px-3 py-2 bg-blue-500 text-white rounded"
-          >
-            Club
-          </button>
+      {/* Mobile Navigation */}
+      <div className="md:hidden sticky top-16 z-40 bg-white/90 backdrop-blur-sm border-b border-secondary-100">
+        <div className="flex overflow-x-auto px-4 py-2">
+          {navigationItems.map((item) => (
+            <button 
+              key={item.id}
+              onClick={() => setView(item.id)}
+              className={`flex-shrink-0 flex flex-col items-center space-y-1 px-4 py-2 mx-1 rounded-xl transition-all duration-200 ${
+                view === item.id 
+                  ? 'bg-primary-100 text-primary-700' 
+                  : 'text-secondary-600 hover:bg-secondary-50'
+              }`}
+            >
+              <span className="text-lg">{item.icon}</span>
+              <span className="text-xs font-medium whitespace-nowrap">{item.label}</span>
+            </button>
+          ))}
         </div>
+      </div>
 
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-8 animate-slide-up">
         {view === 'input' && (
-          <SugarLevelForm 
-            onSubmit={(reading) => {
-              setSugarHistory([...sugarHistory, reading]);
-              setLastReading(reading);
-              setView('results');
-            }}
-          />
+          <div className="max-w-md mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-secondary-900 mb-2">Record Blood Sugar</h2>
+              <p className="text-secondary-600">Track your glucose levels to stay healthy</p>
+            </div>
+            <SugarLevelForm 
+              onSubmit={(reading) => {
+                setSugarHistory([...sugarHistory, reading]);
+                setLastReading(reading);
+                setView('results');
+              }}
+            />
+          </div>
         )}
 
         {view === 'results' && (
